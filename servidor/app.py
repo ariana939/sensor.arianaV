@@ -11,7 +11,7 @@ def dict_factory(cursor, row):
 
 def abrirConexion():
   if 'db' not in g:
-     g.db = sqlite3.connect("api.sqlite")
+     g.db = sqlite3.connect("valores.sqlite") #lo que esta dentro del parentesis es el nombre del archivo sqlite
      g.db.row_factory = dict_factory
   return g.db
 
@@ -27,9 +27,11 @@ def hello_world():
 
 @app.route("/api/sensor", methods=['POST'])
 def sensor():
-    abrirConexion()
+    db = abrirConexion()
     nombre = request.json["nombre"]
     valor =  request.json ["valor"]  
+    db.execute("""INSERT INTO valores (nombre,valor) VALUES (?,?)""", (nombre,valor))
+    db.commit()
     print(f"el nombre es {nombre} y el valor es {valor}")
     cerrarConexion()
     return "ok"
